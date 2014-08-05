@@ -3,12 +3,12 @@ var system = require("system")
   , fs = require("fs")
 
 // Read in arguments
-var args = ["in", "out", "runningsPath", "cssPath", "highlightCssPath", "paperFormat", "paperOrientation", "paperBorder", "renderDelay", "jsonPath"].reduce(function (args, name, i) {
+var args = ["in", "out", "runningsPath", "templatePath", "cssPath", "highlightCssPath", "paperFormat", "paperOrientation", "paperBorder", "renderDelay", "jsonPath"].reduce(function (args, name, i) {
   args[name] = system.args[i + 1]
   return args
 }, {})
 
-page.open(page.libraryPath + "/../html5bp/index.html", function (status) {
+page.open(args.templatePath, function (status) {
   
   if (status == "fail") {
     page.close()
@@ -37,15 +37,10 @@ page.open(page.libraryPath + "/../html5bp/index.html", function (status) {
   // Add the HTML to the page
   page.evaluate(function(html) {
     
-    var body = document.querySelector("body")
-
-    // Remove the paragraph HTML5 boilerplate adds
-    body.removeChild(document.querySelector("p"))
-    
-    var container = document.createElement("div")
-    container.innerHTML = html
-    
-    body.appendChild(container)
+    var container = document.querySelector("#markdown-goes-here")
+    if (container) {
+      container.innerHTML = html
+    }
     
   }, fs.read(args.in))
   
